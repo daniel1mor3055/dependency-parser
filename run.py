@@ -41,7 +41,7 @@ def train(parser, train_data, dev_data, output_path, batch_size=1024, n_epochs=1
     """
     best_dev_UAS = 0
 
-    optimizer = torch.optim.Adam(parser.model.parameters(),lr=lr)
+    optimizer = torch.optim.Adam(parser.model.parameters(), lr=lr)
     loss_func = nn.CrossEntropyLoss()
 
     for epoch in range(n_epochs):
