@@ -72,31 +72,9 @@ class ParserModel(nn.Module):
             @return x (Tensor): tensor of embeddings for words represented in w
                                 (batch_size, n_features * embed_size)
         """
+        rows = [torch.index_select(self.embeddings, dim=0, index=row_indices).view(-1) for row_indices in w]
+        x = torch.stack(rows, dim=0)
 
-        ### YOUR CODE HERE (~1-4 Lines)
-        ### TODO:
-        ###     1) For each index `i` in `w`, select `i`th vector from self.embeddings
-        ###     2) Reshape the tensor using `view` function if necessary
-        ###
-        ### Note: All embedding vectors are stacked and stored as a matrix. The model receives
-        ###       a list of indices representing a sequence of words, then it calls this lookup
-        ###       function to map indices to sequence of embeddings.
-        ###
-        ###       This problem aims to test your understanding of embedding lookup,
-        ###       so DO NOT use any high level API like nn.Embedding
-        ###       (we are asking you to implement that!). Pay attention to tensor shapes
-        ###       and reshape if necessary. Make sure you know each tensor's shape before you run the code!
-        ###
-        ### Pytorch has some useful APIs for you, and you can use either one
-        ### in this problem (except nn.Embedding). These docs might be helpful:
-        ###     Index select: https://pytorch.org/docs/stable/torch.html#torch.index_select
-        ###     Gather: https://pytorch.org/docs/stable/torch.html#torch.gather
-        ###     View: https://pytorch.org/docs/stable/tensors.html#torch.Tensor.view
-        ###     Flatten: https://pytorch.org/docs/stable/generated/torch.flatten.html
-
-
-
-        ### END YOUR CODE
         return x
 
 
