@@ -94,22 +94,10 @@ def train_for_epoch(parser, train_data, dev_data, optimizer, loss_func, batch_si
             train_x = torch.from_numpy(train_x).long()
             train_y = torch.from_numpy(train_y.nonzero()[1]).long()
 
-            ### YOUR CODE HERE (~4-10 lines)
-            ### TODO:
-            ###      1) Run train_x forward through model to produce `logits`
-            ###      2) Use the `loss_func` parameter to apply the PyTorch CrossEntropyLoss function.
-            ###         This will take `logits` and `train_y` as inputs. It will output the CrossEntropyLoss
-            ###         between softmax(`logits`) and `train_y`. Remember that softmax(`logits`)
-            ###         are the predictions (y^ from the PDF).
-            ###      3) Backprop losses
-            ###      4) Take step with the optimizer
-            ### Please see the following docs for support:
-            ###     Optimizer Step: https://pytorch.org/docs/stable/optim.html#optimizer-step
+            logits = parser(train_x)
+            loss = loss_func(logits,train_y)
+            optimizer.step()
 
-
-
-
-            ### END YOUR CODE
             prog.update(1)
             loss_meter.update(loss.item())
 
