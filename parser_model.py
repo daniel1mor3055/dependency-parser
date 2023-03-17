@@ -97,20 +97,11 @@ class ParserModel(nn.Module):
         @return logits (Tensor): tensor of predictions (output after applying the layers of the network)
                                  without applying softmax (batch_size, n_classes)
         """
-        ### YOUR CODE HERE (~3-5 lines)
-        ### TODO:
-        ###     Complete the forward computation as described in write-up. In addition, include a dropout layer
-        ###     as decleared in `__init__` after ReLU function.
-        ###
-        ### Note: We do not apply the softmax to the logits here, because
-        ### the loss function (torch.nn.CrossEntropyLoss) applies it more efficiently.
-        ###
-        ### Please see the following docs for support:
-        ###     Matrix product: https://pytorch.org/docs/stable/torch.html#torch.matmul
-        ###     ReLU: https://pytorch.org/docs/stable/nn.html?highlight=relu#torch.nn.functional.relu
+        input = self.embedding_lookup(w)
+        input = torch.relu(torch.matmul(input, self.embed_to_hidden_weight.t()) + self.embed_to_hidden_bias)
+        input = self.dropout(input)
+        logits = torch.matmul(input, self.hidden_to_logits_weight.t()) + self.hidden_to_logits_bias
 
-
-        ### END YOUR CODE
         return logits
 
 
