@@ -81,7 +81,7 @@ def train_for_epoch(parser, train_data, dev_data, optimizer, loss_func, batch_si
             train_x = torch.from_numpy(train_x).long()
             train_y = torch.from_numpy(train_y.nonzero()[1]).long()
 
-            logits = parser(train_x)
+            logits = parser.model(train_x)
             loss = loss_func(logits, train_y)
             optimizer.step()
 
