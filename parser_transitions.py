@@ -86,25 +86,20 @@ def minibatch_parse(sentences, model, batch_size):
                                                     same as in sentences (i.e., dependencies[i] should
                                                     contain the parse for sentences[i]).
     """
-    dependencies = []
+    partial_parsers = [PartialParse(sentence) for sentence in sentences]
+    unfinished_parsers = partial_parsers.copy()
 
-    ### YOUR CODE HERE (~8-10 Lines)
-    ### TODO:
-    ###     Implement the minibatch parse algorithm.  Note that the pseudocode for this algorithm is given in the pdf handout.
-    ###
-    ###     Note: A shallow copy (as denoted in the PDF) can be made with the "=" sign in python, e.g.
-    ###                 unfinished_parses = partial_parses[:].
-    ###             Here `unfinished_parses` is a shallow copy of `partial_parses`.
-    ###             In Python, a shallow copied list like `unfinished_parses` does not contain new instances
-    ###             of the object stored in `partial_parses`. Rather both lists refer to the same objects.
-    ###             In our case, `partial_parses` contains a list of partial parses. `unfinished_parses`
-    ###             contains references to the same objects. Thus, you should NOT use the `del` operator
-    ###             to remove objects from the `unfinished_parses` list. This will free the underlying memory that
-    ###             is being accessed by `partial_parses` and may cause your code to crash.
+    while unfinished_parsers:
+        batch_partial_parsers = unfinished_parsers[:min(batch_size, len(unfinished_parsers))]
+        transitions = model.predict(batch_partial_parsers)
+        for i, partial_parse in enumerate(batch_partial_parsers):
+            partial_parse.parse_step(transitions[i])
 
-    ### END YOUR CODE
+            if len(partial_parse.buffer) == 0 and len(partial_parse.stack) == 1:
+                # Remove the completed (empty buffer and stack of size 1) parses from unfinished parses
+                unfinished_parsers.remove(partial_parse)
 
-    return dependencies
+    return [parse.dependencies for parse in partial_parsers]
 
 
 def test_step(name, transition, stack, buf, deps,

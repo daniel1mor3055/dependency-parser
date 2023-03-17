@@ -48,35 +48,22 @@ class ParserModel(nn.Module):
         self.hidden_size = hidden_size
         self.embeddings = nn.Parameter(torch.tensor(embeddings))
 
-        ### YOUR CODE HERE (~9-10 Lines)
-        ### TODO:
-        ###     1) Declare `self.embed_to_hidden_weight` and `self.embed_to_hidden_bias` as `nn.Parameter`.
-        ###        Initialize weight with the `nn.init.xavier_uniform_` function and bias with `nn.init.uniform_`
-        ###        with default parameters.
-        ###     2) Construct `self.dropout` layer.
-        ###     3) Declare `self.hidden_to_logits_weight` and `self.hidden_to_logits_bias` as `nn.Parameter`.
-        ###        Initialize weight with the `nn.init.xavier_uniform_` function and bias with `nn.init.uniform_`
-        ###        with default parameters.
-        ###
-        ### Note: Trainable variables are declared as `nn.Parameter` which is a commonly used API
-        ###       to include a tensor into a computational graph to support updating w.r.t its gradient.
-        ###       Here, we use Xavier Uniform Initialization for our Weight initialization.
-        ###       It has been shown empirically, that this provides better initial weights
-        ###       for training networks than random uniform initialization.
-        ###       For more details checkout this great blogpost:
-        ###             http://andyljones.tumblr.com/post/110998971763/an-explanation-of-xavier-initialization
-        ###
-        ### Please see the following docs for support:
-        ###     nn.Parameter: https://pytorch.org/docs/stable/nn.html#parameters
-        ###     Initialization: https://pytorch.org/docs/stable/nn.init.html
-        ###     Dropout: https://pytorch.org/docs/stable/nn.html#dropout-layers
-        ### 
-        ### See the PDF for hints.
+        # Declare and initialize weight and bias
+        self.embed_to_hidden_weight = nn.Parameter(torch.empty(hidden_size, self.embed_size * n_features))
+        nn.init.xavier_uniform_(self.embed_to_hidden_weight)
 
+        self.embed_to_hidden_bias = nn.Parameter(torch.empty(hidden_size))
+        nn.init.uniform_(self.embed_to_hidden_bias)
 
+        # Declare dropout layer
+        self.dropout = nn.Dropout(dropout_prob)
 
+        # Declare and initialize weight and bias
+        self.hidden_to_logits_weight = nn.Parameter(torch.empty(n_classes, hidden_size))
+        nn.init.xavier_uniform_(self.hidden_to_logits_weight)
 
-        ### END YOUR CODE
+        self.hidden_to_logits_bias = nn.Parameter(torch.empty(n_classes))
+        nn.init.uniform_(self.hidden_to_logits_bias)
 
     def embedding_lookup(self, w):
         """ Utilize `w` to select embeddings from embedding matrix `self.embeddings`
